@@ -4,11 +4,13 @@ metadata:
   name: deploy
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: bitnami/nginx
     argocd-image-updater.argoproj.io/write-back-method: git
     argocd-image-updater.argoproj.io/myapp.values-file: K8_ENV/UAT/nginx_values.yaml
     argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/image-list: bitnami/nginx
     argocd-image-updater.argoproj.io/bitnami.nginx.update-strategy: latest
+    argocd-image-updater.argoproj.io/bitnami.nginx.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/bitnami.nginx.helm.tag-name: image.tag
 spec:
   destination:
     namespace: argocd
