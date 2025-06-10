@@ -10,28 +10,20 @@ service:
   type: ClusterIP
   port: 80
 
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: deploy-nginx
-  namespace: argocd
+ingress:
+  enabled: true
+  hostname: nginx.argocd.local    # Replace with your domain or keep it as test
+  path: /
+  ingressClassName: alb
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
-spec:
-  rules:
-    - host: nginx.argocd.local  # replace with your actual domain
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: deploy-nginx
-                port:
-                  name: http
+    alb.ingress.kubernetes.io/group.name: "nginx-group"
+    alb.ingress.kubernetes.io/success-codes: "200-399"
+  tls: false
+
 resources:
   limits:
     cpu: 200m
