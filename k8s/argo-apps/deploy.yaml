@@ -18,7 +18,7 @@ spec:
         - $values/K8_ENV/UAT/nginx_values.yaml
 
     # Values from Git
-    - repoURL: ''
+    - repoURL: 'https://github.com/Arpit-Sharma-as/devops.git'
       targetRevision: main
       ref: values
 
