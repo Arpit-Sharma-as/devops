@@ -8,12 +8,18 @@ image:
 
 service:
   type: ClusterIP
-  port: 80
+  ports:
+    http:
+      port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http  # Explicitly name the port
 
 ingress:
   enabled: true
-  hostname: nginx.argocd.local    # Replace with your domain or keep it as test
+  hostname: nginx.argocd.local
   path: /
+  pathType: Prefix  # Use Prefix for ALB
   ingressClassName: alb
   annotations:
     kubernetes.io/ingress.class: alb
