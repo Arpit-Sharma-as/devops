@@ -1,26 +1,8 @@
-replicaCount: 2
-
-image:
-  registry: docker.io
-  repository: bitnami/nginx
-  tag: 1.25.3
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
-  ports:
-    http:
-      port: 80
-      targetPort: 80
-      protocol: TCP
-      name: http  # Explicitly name the port
-
-ingress:
-  enabled: true
-  hostname: nginx.argocd.local
-  path: /
-  pathType: Prefix  # Use Prefix for ALB
-  ingressClassName: alb
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: deploy-nginx
+  namespace: argocd
   annotations:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -28,18 +10,22 @@ ingress:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     alb.ingress.kubernetes.io/group.name: "nginx-group"
     alb.ingress.kubernetes.io/success-codes: "200-399"
-  tls: false
-
-resources:
-  limits:
-    cpu: 200m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-livenessProbe:
-  enabled: true
-
-readinessProbe:
-  enabled: true
+  labels:
+    app.kubernetes.io/instance: deploy
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: nginx
+    app.kubernetes.io/version: 1.25.2
+    helm.sh/chart: nginx-15.3.2
+spec:
+  ingressClassName: alb
+  rules:
+  - host: nginx.argocd.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: deploy-nginx
+            port:
+              name: http
